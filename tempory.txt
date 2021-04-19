@@ -1,0 +1,14 @@
+    <!-- <% usersWithPosts.forEach(function(user) { %>
+        <div class="row border">
+          <div class="col-sm-4 img-container">
+            <img src="<%=user.userposts.image%>" class="image-home">
+          </div>
+          <div class="col-sm-8 text-container">
+            <h2> <%= user.userposts.title %></h2>
+            <p> 
+            <%= (post.body).substring(0,100) + "..." %>
+            <a href="/posts/<%=user.userposts.title%>">Read More</a> 
+            </p>
+          </div>
+        </div>
+    <% }) %> -->

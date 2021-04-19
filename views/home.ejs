@@ -1,0 +1,49 @@
+<%- include("partials/header"); -%>
+
+  <div class="container">
+    <ul class="nav navbar-nav">
+        <!-- 6 -->
+        <li id="home"><a href="#section1">HOME</a></li>
+        <li id="about"><a href="#section2">ABOUT US</a></li>
+        <li id="contact"><a href="#section3">CONTACT US</a></li>
+    </ul>
+    <span class="login-btn">
+      <a class="btn btn-lg" href="/login" role="button">Login</a>
+    </span>
+  </div>
+
+  
+  <div class="main" id="section1">
+    <h1>Home</h1>
+    <p> <%= startingContent %> </p>
+    <br>
+  
+    <h1>Posts</h1>
+    <% posts.forEach(function(post) { %>
+        <div class="row border">
+          <div class="col-sm-4 img-container">
+            <img src="<%=post.image%>" class="image-home">
+          </div>
+          <div class="col-sm-8 text-container">
+            <h2> <%= post.title %></h2>
+            <p> 
+            <%= (post.body).substring(0,100) + "..." %>
+            <a href="/posts/<%=post.title%>">Read More</a> 
+            </p>
+          </div>
+        </div>
+    <% }) %>
+  </div>
+  
+  <br>
+  <div class="main" id="section2">
+    <h1>About Us</h1>
+    <p> <%= aboutContent %> </p>
+  </div>
+
+  <div class="main" id="section3">
+    <h1>Contact Us</h1>
+    <p> <%= contactContent %> </p>
+  </div>
+
+  <%- include("partials/footer"); -%>

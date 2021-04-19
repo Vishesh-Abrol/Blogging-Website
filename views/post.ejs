@@ -1,0 +1,43 @@
+<%- include("partials/header"); -%>
+
+<span class="home-btn">
+  <a href="/">
+    <span class="glyphicon glyphicon-home"></span>Home
+  </a>
+</span>
+
+  <span class="login-btn">
+    <a class="btn btn-lg" href="/login" role="button">Login</a>
+  </span>
+
+  <div class="container above-margin">
+    <h1 class="centered-title"> <%= title %></h1>
+    <div class="container">
+        <div class="img2-container">
+            <img src="<%=image%>" class="image-post">
+        </div>
+        <div class="text2-container">
+            <p> <%= content %> </p>
+        </div>
+    </div>
+  </div>
+
+  <h2>Comments</h2>
+  <% comments.forEach(function(singlecomment) { %>
+     <div class="bordercomments">
+        <p class="space"> <%= singlecomment.postedcomment %></p>
+     </div>
+     <br>
+  <% }) %>
+  
+  <div class="container above-margin">
+    <form action="/posts/<%=title%>" method="POST">
+      <div class="form-group">
+        <label>Post Comment</label>
+        <input type="text" class="form-control" name="postComment" required>
+      </div>
+      <button type="submit" class="btn btn-primary" name="button">Post</button>
+    </form>
+  </div>
+
+<%- include("partials/footer"); -%>
