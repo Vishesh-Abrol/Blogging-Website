@@ -112,11 +112,10 @@ app.get("/register", function(req, res) {
 });
 
 app.get("/posts/:anything", function(req, res) {
-  const requestedTitle = _.lowerCase(req.params.anything);
+  const requestedTitle = req.params.anything;
   Post.find({title:requestedTitle}).then((post)=>{
       if (req.isAuthenticated()) 
       {
-        console.log(post)
         res.render("loggedinpost", 
         {title: post[0].title, image: post[0].image, content: post[0].body, 
         comments: post[0].comments});  // change to post.comments
@@ -165,20 +164,29 @@ app.post("/posts/:anything", function(req, res) {
     postedcomment : req.body.postComment
   };
 
-  let requestedTitle = _.lowerCase(req.params.anything);
+  let requestedTitle = req.params.anything;
+  oldcomments = [];
+  Post.find({title:requestedTitle}).then((post)=>{
+    oldcomments = [...post[0].comments];
+    //console.log(post[0].comments);
+    newcomments=[]
+  for(let i=0;i<oldcomments.length;i++)
+  {
+    let x = {postedcomment:oldcomments[i].postedcomment};
+    newcomments.push(x);
+  }
+  newcomments.push(singlecomment);
+  if (req.isAuthenticated()) 
+  {
+    Post.findOneAndUpdate({title:requestedTitle} ,{comments:newcomments},{returnOriginal:false},(err,result)=>{});
+    res.redirect("/homeloggedin");   //change this
+  } 
+  else 
+  {
+    res.redirect("/login");
+  }
+});
 
-  posts.forEach(function(post) {
-    const storedTitle = _.lowerCase(post.title);
-
-    if(storedTitle === requestedTitle) {
-      if (req.isAuthenticated()) {
-        post.comment.push(singlecomment);
-        res.redirect("/homeloggedin");   //change this
-      } else {
-        res.redirect("/login");
-      }
-    } 
-  });
 });
 
 app.post("/register", function(req,res) {
