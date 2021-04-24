@@ -112,10 +112,16 @@ app.get("/register", function(req, res) {
 });
 
 app.get("/posts/:anything", function(req, res) {
+
   const requestedTitle = req.params.anything;
   Post.find({title:requestedTitle}).then((post)=>{
       if (req.isAuthenticated()) 
       {
+  const requestedTitle = _.lowerCase(req.params.anything);
+  Post.find({title:requestedTitle}).then((post)=>{
+      if (req.isAuthenticated()) 
+      {
+        console.log(post)
         res.render("loggedinpost", 
         {title: post[0].title, image: post[0].image, content: post[0].body, 
         comments: post[0].comments});  // change to post.comments
@@ -164,6 +170,7 @@ app.post("/posts/:anything", function(req, res) {
     postedcomment : req.body.postComment
   };
 
+
   let requestedTitle = req.params.anything;
   oldcomments = [];
   Post.find({title:requestedTitle}).then((post)=>{
@@ -187,6 +194,20 @@ app.post("/posts/:anything", function(req, res) {
   }
 });
 
+  let requestedTitle = _.lowerCase(req.params.anything);
+
+  posts.forEach(function(post) {
+    const storedTitle = _.lowerCase(post.title);
+
+    if(storedTitle === requestedTitle) {
+      if (req.isAuthenticated()) {
+        post.comment.push(singlecomment);
+        res.redirect("/homeloggedin");   //change this
+      } else {
+        res.redirect("/login");
+      }
+    } 
+  });
 });
 
 app.post("/register", function(req,res) {
@@ -196,7 +217,7 @@ app.post("/register", function(req,res) {
       if(err) {
           console.log(err);
           res.redirect("/register");
-      } else {
+      } else 
           passport.authenticate("local")(req, res, function() {
               res.redirect("/homeloggedin");
           });
