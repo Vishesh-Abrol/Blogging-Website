@@ -5,7 +5,6 @@
     <span class="glyphicon glyphicon-home"></span>Home
   </a>
 </span>
-
 <span class="logout-btn">
   <a class="btn btn-lg" href="/logout" role="button">Log Out</a>
 </span>
@@ -25,7 +24,7 @@
                 <%= (post.body).substring(0,100) + "..." %>
                 <a href="/posts/<%=post.id%>">Read More</a> 
             </p>
-            <form action="/myposts" method="POST">
+            <form action="/deletepost/<%=post.id%>" method="POST">
                 <button type="submit" class="btn btn-danger dlt-btn">Delete Post</button>
             </form>
           </div>

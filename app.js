@@ -73,10 +73,15 @@ app.get("/", function(req, res) {
   });
 });
 
-app.get("/homeloggedin", function(req, res) {
+app.get("/homeloggedin/:anything", function(req, res) {
+  if(req.isAuthenticated())
+  {
   Post.find({}).then((posts)=>{
     res.render("homeloggedin", {startingContent: homeStartingContent, posts: posts});
   });
+  }
+  else 
+  res.redirect("/login");
 });
 
 app.get("/auth/google",
@@ -87,10 +92,11 @@ app.get("/auth/google/blog",
   passport.authenticate('google', { failureRedirect: '/login' }),
   function(req, res) {
     // Successful authentication, redirect home.
-    res.redirect("/homeloggedin");
+    console.log(req.user)
+    res.redirect("/homeloggedin/"+req.user._id);
   });
 
-app.get("/compose", function(req, res) {
+app.get("/compose/:anything", function(req, res) {
   if (req.isAuthenticated()) {
       res.render("compose");
   } else {
@@ -122,9 +128,9 @@ app.get("/posts/:anything", function(req, res) {
   });
 });
 
-app.get("/myposts", function(req, res) {
+app.get("/myposts/:anything", function(req, res) {
   if (req.isAuthenticated()) {
-    Post.find({}).then((posts)=>{
+    Post.find({user:req.params.anything}).then((posts)=>{
       res.render("myposts", {posts: posts});
     });
   } else {
@@ -138,12 +144,13 @@ app.get("/logout", function(req, res) {
 });
 
 // **** CREATING POST *****
-app.post("/compose", function(req, res) {
+app.post("/compose/:anything", function(req, res) {
   const newPost = new Post({
     title : req.body.postTitle,
     image : req.body.postImage,
     body : req.body.postBody,
-    comments:[]
+    comments:[],
+    user: req.params.anything
   });
   newPost.save((err,data)=>{
     if(err)
@@ -154,7 +161,7 @@ app.post("/compose", function(req, res) {
     }
     else
     {
-      res.redirect("/homeloggedin");
+      res.redirect("/homeloggedin/"+req.params.anything);
     }
   });
 });
@@ -179,7 +186,7 @@ app.post("/posts/:anything", function(req, res) {
   
     if (req.isAuthenticated())  {
       newcomments.push(singlecomment);
-      Post.findOneAndUpdate({title:requestedTitle} ,{comments:newcomments},{returnOriginal:false},(err,result)=>{});
+      Post.findOneAndUpdate({_id:requestedID} ,{comments:newcomments},{returnOriginal:false},(err,result)=>{});
       res.redirect("/homeloggedin");   //change this
     }  else  {
         res.redirect("/login");
@@ -187,13 +194,13 @@ app.post("/posts/:anything", function(req, res) {
   });
 });
 
-app.post("/myposts", function(req, res) {
-  if (req.isAuthenticated()) {
-    res.redirect("/homeloggedin");
-  } else {
-      res.redirect("/login");
-  }
-});
+// app.post("/myposts", function(req, res) {
+//   if (req.isAuthenticated()) {
+//     res.redirect("/homeloggedin");
+//   } else {
+//       res.redirect("/login");
+//   }
+// });
 
 app.post("/register", function(req,res) {
 
@@ -210,10 +217,33 @@ app.post("/register", function(req,res) {
   });
 });
 
+
 app.post('/login',
-  passport.authenticate('local', { successRedirect: '/homeloggedin',
-    failureRedirect: '/login'})
-);
+  passport.authenticate('local',{failureRedirect: '/login'}),
+  (req, res)=>{ console.log(req.user);
+  res.redirect('/homeloggedin/' + req.user._id);  //Route Doesn't Exists
+  });
+
+
+// app.post('/login',
+//   passport.authenticate('local', { successRedirect: '/homeloggedin',
+//     failureRedirect: '/login'})
+// );
+
+app.post("/deletepost/:anything",(req,res)=>{
+  if(req.isAuthenticated())
+  {
+    Post.deleteMany({_id:req.params.anything},(err)=>{
+      if(err)
+      console.log(err);
+      res.redirect('/login');
+    })
+
+  }
+  else res.redirect("/login");
+});
+
+
 
 app.listen(3000, function() {
   console.log("Server started on port 3000");

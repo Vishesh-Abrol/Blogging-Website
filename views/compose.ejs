@@ -12,7 +12,7 @@
 
 <div class="container above-margin">
   <h1>Compose</h1>
-  <form action="/compose" method="POST">
+  <form action="/compose" id="post_blog" method="POST">
     <div class="form-group">
       <label>Title</label>
       <!-- <textarea name="postTitle" cols="30" rows="1" class="form-control"></textarea> -->
@@ -31,5 +31,10 @@
     <button type="submit" class="btn btn-primary" name="button">Publish</button>
   </form>
 </div>
-
+<script>
+  let userId=window.location.href.split('/')[4];
+  
+  
+  document.getElementById("post_blog").action="/compose/"+userId;
+</script>
 <%- include("partials/footer"); -%>

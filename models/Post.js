@@ -15,7 +15,11 @@ const Post = mongoose.model('post',{
     },
     comments:{ 
         type: [{postedcomment : String}]  
+    },
+    user:{
+        type:String
     }
+
 });
 
 module.exports = Post;
